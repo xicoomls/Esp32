@@ -1,0 +1,56 @@
+#include "Nextion.h"
+
+NexPage p0 = NexPage(0,0,"page0");
+NexButton p0_b0 = NexButton(0,1,"b0");
+NexPage p1 = NexPage(1,0,"page1");
+NexButton p1_b0 = NexButton(1,1,"b0");
+NexButton p1_b1 = NexButton(1,1,"b1");
+NexButton p1_b2 = NexButton(1,1,"b2");
+NexPage p2 = NexPage(1,0,"page2");
+NexText p2_t0 = NexText(0,6,"t0");
+NexButton p2_b0 = NexButton(1,1,"b0");
+NexPage p3 = NexPage(1,0,"page3");
+NexButton p3_b0 = NexButton(1,1,"b0");
+
+NexTouch *nex_listen_list[] = {
+  &p0_b0, &p1_b0, &p1_b1, &p1_b2, p2_b0,p3_b0, NULL
+};
+
+uint32_t next, myInt = 0;
+#define ledPin 2
+
+void p0_b0_Press(void *ptr) {
+  digitalWrite(ledPin, HIGH);
+}
+
+void p0_b0_Release(void *ptr) {
+  digitalWrite(ledPin, LOW);
+}
+
+void p0_b0_Release(void *ptr) {
+  p1.show();
+}
+
+void p1_b0_Release(void *ptr) {
+p0.show();
+}
+
+void setup() {
+  nexInit();
+  pinMode(ledPin,OUTPUT);
+  digitalWrite(ledPin,LOW);
+  p0_b0.attachPop(p0_b0_Release, &p0_b0);
+  p0_b0.attachPush(p0_b0_Press, &p0_b0);
+  p0_b0.attachPop(p0_b0_Release, &p0_b0);
+  p1_b0.attachPop(p1_b0_Release, &p1_b0);
+  p2_t0.setText("Arduino Text");
+  next = millis();
+}
+
+void loop() {
+  nexLoop(nex_listen_list);
+  if(millis() >= next) {
+    next = millis()+500;
+    do_every_so_often();
+  }
+}
